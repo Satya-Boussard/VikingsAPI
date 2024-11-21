@@ -23,3 +23,24 @@ function verifyViking($viking): bool {
     }
     return true;
 }
+
+function createWeaponsUrls(array $vikings){    
+    foreach ($vikings as &$viking) {
+        if ($viking['weaponId']) {
+            $viking['weapon'] = "/weapon/findOne.php?id={$viking['weaponId']}";
+        } else {
+            $viking['weapon'] = '';
+        }
+    }
+    return $vikings;
+}
+
+function createWeaponUrl(array $viking){    
+    if ($viking['weaponId']) {
+        $viking['weapon'] = "/weapon/findOne.php?id={$viking['weaponId']}";
+    } else {
+        $viking['weapon'] = '';
+    }
+
+    return $viking;
+}

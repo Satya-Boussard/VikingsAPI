@@ -1,7 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/api/dao/viking.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/api/dao/weapon.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/api/utils/server.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/api/viking/service.php';
 
 header('Content-Type: application/json');
 
@@ -10,11 +9,11 @@ if (!methodIsAllowed('read')) {
     return;
 }
 
-$name = '';
+$type = '';
 $limit = 10;
 $offset = 0;
-if (isset($_GET['name'])) {
-    $name = trim($_GET['name']);
+if (isset($_GET['type'])) {
+    $name = trim($_GET['type']);
 }
 if (isset($_GET['limit'])) {
     $limit = intval($_GET['limit']);
@@ -29,8 +28,5 @@ if (isset($_GET['offset'])) {
     }
 }
 
-$vikings = findAllVikings($name, $limit, $offset);
-
-$result_viking = createWeaponsUrls($vikings);
-
-echo json_encode($result_viking, JSON_UNESCAPED_SLASHES);
+$weapons = findAllWeapons($type, $limit, $offset);
+echo json_encode($weapons);

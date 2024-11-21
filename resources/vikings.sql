@@ -37,7 +37,7 @@ INSERT INTO `viking` (`name`, `attack`, `defense`, `health`) VALUES
 ('Björn', 350, 200, 100);
 
 INSERT INTO `weapon` (`type`, `damage`) VALUES
-('Normal sword', 800),
-('Normal axe', 600),
-('Normal bow', 400),
-('Normal spear', 550);
+('sword', 800),
+('axe', 600),
+('bow', 400),
+('spear', 550);

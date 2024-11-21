@@ -4,6 +4,7 @@ function methodIsAllowed(string $action): bool {
     $method = $_SERVER['REQUEST_METHOD'];
     switch ($action) {
         case 'update':
+            return $method == 'PATCH';
         case 'create':
             return $method == 'PUT';
         case 'read':
@@ -15,12 +16,12 @@ function methodIsAllowed(string $action): bool {
     }
 }
 
-function getBody(): array {
+function getBody() {
     $body = file_get_contents('php://input');
     return json_decode($body, true);
 }
 
-function returnError (int $code, string $message) {
+function returnError(int $code, string $message) {
     http_response_code($code);
     echo json_encode(['error' => $message]);
     exit();

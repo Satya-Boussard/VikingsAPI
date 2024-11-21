@@ -1,9 +1,10 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/api/utils/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/api/dao/weapon.php';
 
 function findOneViking(string $id) {
     $db = getDatabaseConnection();
-    $sql = "SELECT id, name, health, attack, defense FROM viking WHERE id = :id";
+    $sql = "SELECT id, name, health, attack, defense, weaponId FROM viking WHERE id = :id";
     $stmt = $db->prepare($sql);
     $res = $stmt->execute(['id' => $id]);
     if ($res) {
@@ -15,7 +16,7 @@ function findOneViking(string $id) {
 function findAllVikings (string $name = "", int $limit = 10, int $offset = 0) {
     $db = getDatabaseConnection();
     $params = [];
-    $sql = "SELECT id, name, health, attack, defense FROM viking";
+    $sql = "SELECT id, name, health, attack, defense, weaponId FROM viking";
     if ($name) {
         $sql .= " WHERE name LIKE %:name%";
         $params['name'] = $name;
@@ -40,13 +41,27 @@ function createViking(string $name, int $health, int $attack, int $defense) {
     return null;
 }
 
-function updateViking(string $id, string $name, int $health, int $attack, int $defense) {
+function updateVikingWeapon(string $id, $weaponId){
+    $db = getDatabaseConnection();
+    if ($weaponId !== null && checkWeaponExist($weaponId)) {
+        $sqlWeapon = "UPDATE viking SET weaponId = :weaponId WHERE id = :id";
+        $stmtWeapon = $db->prepare($sqlWeapon);
+        $stmtWeapon->execute(['id' => $id, 'weaponId' => $weaponId]);
+    } else {
+        $sqlWeapon = "UPDATE viking SET weaponId = NULL WHERE id = :id";
+        $stmtWeapon = $db->prepare($sqlWeapon);
+        $stmtWeapon->execute(['id' => $id]);
+    }
+    return $stmtWeapon->rowCount();
+}
+
+function updateViking(string $id, string $name, int $health, int $attack, int $defense, ?int $weaponId = null) {
     $db = getDatabaseConnection();
     $sql = "UPDATE viking SET name = :name, health = :health, attack = :attack, defense = :defense WHERE id = :id";
     $stmt = $db->prepare($sql);
     $res = $stmt->execute(['id' => $id, 'name' => $name, 'health' => $health, 'attack' => $attack, 'defense' => $defense]);
     if ($res) {
-        return $stmt->rowCount();
+        return updateVikingWeapon($id, $weaponId);
     }
     return null;
 }
