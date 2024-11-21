@@ -11,7 +11,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-CREATE TABLE `weapons` (
+CREATE TABLE `weapon` (
   `id` int NOT NULL AUTO_INCREMENT,
   `type` varchar(16) NOT NULL,
   `damage` int NOT NULL,
@@ -24,9 +24,9 @@ CREATE TABLE `viking` (
   `attack` int NOT NULL,
   `defense` int NOT NULL,
   `health` int NOT NULL,
-  `weapon` int DEFAULT NULL,
+  `weaponId` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`weapon`) REFERENCES `weapons`(`id`) ON DELETE SET NULL
+  FOREIGN KEY (`weaponId`) REFERENCES `weapon`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -36,7 +36,7 @@ INSERT INTO `viking` (`name`, `attack`, `defense`, `health`) VALUES
 ('Lagertha', 300, 200, 200),
 ('Björn', 350, 200, 100);
 
-INSERT INTO `weapons` (`type`, `damage`) VALUES
+INSERT INTO `weapon` (`type`, `damage`) VALUES
 ('Normal sword', 800),
 ('Normal axe', 600),
 ('Normal bow', 400),
