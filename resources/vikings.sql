@@ -11,61 +11,33 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de données : `vikings`
---
-
--- --------------------------------------------------------
-
---
--- Structure de la table `viking`
---
-
 CREATE TABLE `viking` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(16) NOT NULL,
   `attack` int NOT NULL,
   `defense` int NOT NULL,
-  `health` int NOT NULL
+  `health` int NOT NULL,
+  `weapon` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`weapon`) REFERENCES `weapons`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Déchargement des données de la table `viking`
---
+CREATE TABLE `weapons` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `type` varchar(16) NOT NULL,
+  `damage` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `viking` (`id`, `name`, `attack`, `defense`, `health`) VALUES
-(1, 'Ragnar', 200, 150, 300),
-(2, 'Floki', 150, 80, 350),
-(3, 'Lagertha', 300, 200, 200),
-(4, 'Björn', 350, 200, 100);
 
---
--- Index pour les tables déchargées
---
+INSERT INTO `viking` (`name`, `attack`, `defense`, `health`) VALUES
+('Ragnar', 200, 150, 300),
+('Floki', 150, 80, 350),
+('Lagertha', 300, 200, 200),
+('Björn', 350, 200, 100);
 
---
--- Index pour la table `viking`
---
-ALTER TABLE `viking`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT pour les tables déchargées
---
-
---
--- AUTO_INCREMENT pour la table `viking`
---
-ALTER TABLE `viking`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+INSERT INTO `weapons` (`type`, `damage`) VALUES
+('Normal sword', 800),
+('Normal axe', 600),
+('Normal bow', 400),
+('Normal spear', 550);
