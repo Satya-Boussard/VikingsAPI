@@ -11,6 +11,13 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+CREATE TABLE `weapons` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `type` varchar(16) NOT NULL,
+  `damage` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `viking` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(16) NOT NULL,
@@ -20,13 +27,6 @@ CREATE TABLE `viking` (
   `weapon` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`weapon`) REFERENCES `weapons`(`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `weapons` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `type` varchar(16) NOT NULL,
-  `damage` int NOT NULL,
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
