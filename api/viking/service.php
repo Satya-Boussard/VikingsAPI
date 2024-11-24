@@ -31,6 +31,7 @@ function createWeaponsUrls(array $vikings){
         } else {
             $viking['weapon'] = '';
         }
+        unset($viking['weaponId']);
     }
     return $vikings;
 }
@@ -41,6 +42,16 @@ function createWeaponUrl(array $viking){
     } else {
         $viking['weapon'] = '';
     }
+    unset($viking['weaponId']);
 
     return $viking;
+}
+
+
+function createVikingsUrl(array $vikings){
+    foreach ($vikings as &$viking) {
+        $viking['link'] = "/weapon/findOne.php?id={$viking['id']}";
+        unset($viking['id']);
+    }
+    return $vikings;
 }

@@ -76,3 +76,11 @@ function deleteViking(string $id) {
     }
     return null;
 }
+
+function findVikingsByWeaponId(string $weaponId) {
+    $db = getDatabaseConnection();
+    $sql = "SELECT id, name FROM viking WHERE weaponId = :weaponId";
+    $stmt = $db->prepare($sql);
+    $stmt->execute(['weaponId' => $weaponId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
