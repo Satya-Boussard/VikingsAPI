@@ -1,140 +1,176 @@
-# TP Vikings
+# API Documentation
 
-## Modalités
-
-Ce TP est à faire par **groupes de 3**.
-
-Les livrables sont à rendre sur MyGES au plus tard à la date de rendu indiquée dans l'espace de rendu sur MyGes. Ces livrables incluent :
-- Le code source de votre projet
-- Un export de l'environnement Postman de votre projet
-- Un export de la base de données de votre projet
-- Le lien du repository GitHub de votre projet s'il y en a un
-- Une brève explication (sous forme de fichier texte ou dans le README.md) de votre stratégie de travail en équipe (qui a fait quoi, comment vous avez travaillé ensemble, etc.)
-
-## Objectifs
-
-
-En partant du code source disponible sur le repository GitHub https://github.com/SarahSch19/VikingsAPI, vous devez ajouter de nouvelles fonctionnalités à l'API des vikings.
-
-### Armes
-
-Ajouter une nouvelle table `Weapon` qui aura les propriétés suivantes :
-- `id` : int, clé primaire auto-incrémentée
-- `type` : string, type de l'arme (ex: "sword", "axe", "bow", "spear", etc.) (obligatoire)
-- `damage` : int, dégâts infligés par l'arme (obligatoire)
-
-Ajouter les fonctionnalités CRUD pour les armes :
-- `GET /weapon/findOne.php?id=<id>` : retourne l'arme d'id `<id>`
-- `GET /weapon/find.php` : retourne toutes les armes avec un système de limite et d'offset
-- `PUT /weapon/create.php` : crée une nouvelle arme
-- `PATCH /weapon/update.php?id=<id>` : modifie une arme d'id `<id>`
-- `DELETE /weapon/delete.php?id=<id>` : supprime une arme d'id `<id>`
-
-### Vikings
-
-Un viking ne peut avoir qu'une seule arme au maximum, mais peut n'en avoir aucune.
-- Modifier la table `viking` pour qu'elle ait une arme (clé étrangère `weaponId` vers la table `Weapon`, peut être null).
-
-Ajouter les fonctionnalités CRUD pour les vikings :
-- Mettre à jour les fonctionnalités Read du viking (findOne et findAll) pour qu'elles retournent le détail de l'arme du viking si celui-ci en a une. L'arme doit être retournée au format d'un lien vers le détail de l'arme (HATEOAS) si le viking en a une (sinon renvoyer `"weapon": ""`). Exemple :
-```JSON
-{
-  "id": 1,
-  "name": "Ragnar",
-  "health": 300,
-  "attack": 200,
-  "defense": 150,
-  "weapon": "/weapon/findOne.php?id=3"
-}
-```
-- Mettre à jour la fonctionnalité Create du viking pour qu'il puisse être créé avec une arme par défaut si elle existe. Retourner une erreur appropriée si elle n'existe pas et ne pas créer le viking.
-- Mettre à jour la fonctionnalité Update avec PUT pour mettre à jour le viking dans son intégralité. Faire les vérifications appropriées pour mettre à jour l'arme si elle existe, ou la supprimer si elle n'existe pas.
-- Créer une nouvelle fonctionnalité Update dans le fichier `api/viking/addWeapon.php` du viking pour lui ajouter une arme si elle existe. Retourner une erreur appropriée si elle n'existe pas et ne pas mettre à jour le viking. Faire les vérifications appropriées pour correspondre aux contraintes d'appel suivantes :
-```JSON
-PATCH api/viking/addWeapon.php?id=<vikingId>
-Body :
-{
-  "weaponId": 3
-}
-```
-Attention : la nouvelle fonctionnalité d'Update ne doit mettre à jour **que** le champ WeaponId du viking, et ne doit pas mettre à jour les autres champs du viking.
-
-### Bonus
-
-- Dans le cas où une arme est supprimée, mettre à jour les vikings qui la possèdent pour qu'ils n'aient plus d'arme.
-- Ajouter une fonctionnalité `GET /viking/findByWeapon.php?id=<weaponId>` qui retourne tous les vikings possédant l'arme d'id `<weaponId>`. Le corps de réponse doit retourner uniquement le nom des vikings et un lien vers leur détail (HATEOAS). Exemple :
-```JSON
-[
-  {
-    "name": "Ragnar",
-    "link": "/viking/findOne.php?id=1"
-  },
-  {
-    "name": "Lagertha",
-    "link": "/viking/findOne.php?id=2"
-  }
-]
-```
+This API manages objects related to weapons through various endpoints for creating, reading, updating, and deleting data. Below is an overview of the features offered by each file.
 
 ---
 
-# Grille de notation
+## Table of Contents
 
-### 1. Respect des livrables (3 points)
-| Critère                                           | Détails                                                                                 | Points |
-|---------------------------------------------------|-----------------------------------------------------------------------------------------|--------|
-| **Code source**                                   | Le code source est complet, correctement structuré, et respectant les consignes.        | 1      |
-| **Export Postman**                                | L'environnement Postman est fourni et contient toutes les requêtes nécessaires.         | 0.5    |
-| **Export de la base de données**                  | Le fichier SQL d'export est présent et correctement utilisable.                         | 0.5    |
-| **README/Explication de la stratégie de travail** | La stratégie de collaboration est expliquée clairement dans un README ou fichier texte. | 1      |
-
-
-### 2. Table `Weapon` et ses fonctionnalités CRUD (6 points)
-| Critère                           | Détails                                                                                 | Points |
-|-----------------------------------|-----------------------------------------------------------------------------------------|--------|
-| **Création de la table `Weapon`** | La table est correctement ajoutée avec les colonnes demandées (`id`, `type`, `damage`). | 1      |
-| **GET /weapon/findOne.php**       | Fonctionnalité correcte pour retourner une arme par ID.                                 | 1      |
-| **GET /weapon/find.php**          | Fonctionnalité correcte pour retourner toutes les armes avec limite et offset.          | 1      |
-| **PUT /weapon/create.php**        | Création d'une nouvelle arme fonctionnelle avec validation des entrées.                 | 1      |
-| **PATCH /weapon/update.php**      | Mise à jour d'une arme fonctionnelle avec validation des entrées.                       | 1      |
-| **DELETE /weapon/delete.php**     | Suppression d'une arme fonctionnelle.                                                   | 1      |
-
-
-### 3. Mise à jour de la table `Viking` et ses fonctionnalités (10 points)
-| Critère                                           | Détails                                                                                                          | Points |
-|---------------------------------------------------|------------------------------------------------------------------------------------------------------------------|--------|
-| **Modification de la table `viking`**             | Ajout d'une clé étrangère `weaponId` (nullable) dans la table.                                                   | 1      |
-| **GET /viking/findOne**                           | Retourne les détails d’un viking avec lien HATEOAS vers son arme.                                                | 1      |
-| **GET /viking/findAll**                           | Retourne tous les vikings avec leurs armes sous forme de lien HATEOAS.                                           | 1      |
-| **PUT /viking/create.php**                        | Création d’un viking avec une arme par défaut si elle existe. Gère les erreurs si l’arme n'existe pas.           | 2      |
-| **PUT /viking/update.php**                        | Mise à jour d’un viking avec une arme par défaut si elle existe. Gère les erreurs si l’arme n'existe pas.        | 2      |
-| **PATCH /viking/addWeapon.php**                   | Ajout d'une arme à un viking avec validation des contraintes (arme existante, mise à jour de l'arme uniquement). | 2      |
-| **Validation des entrées et gestion des erreurs** | Erreurs appropriées (ex : arme non existante, contraintes non respectées).                                       | 1      |
-
-
-### 5. Qualité du code (1 point)
-| Critère             | Détails                                                                                                                                | Points |
-|---------------------|----------------------------------------------------------------------------------------------------------------------------------------|--------|
-| **Qualité du code** | Code bien structuré, respect des standards (noms de fichiers, conventions de code, répartition des fonctionnalités dans les fichiers). | 1      |
-
-
-### Récapitulatif des points
-| Section                                             | Points       |
-|-----------------------------------------------------|--------------|
-| Respect des livable                                 | 3            |
-| Table `Weapon` et fonctionnalités CRUD              | 6            |
-| Mise à jour de la table `Viking` et fonctionnalités | 10           |
-| Qualité du code                                     | 1            |
-| **Total**                                           | **20 (max)** |
-
+- [API Documentation](#api-documentation)
+   * [Table of Contents](#table-of-contents)
+   * [Endpoints](#endpoints)
+      + [Creating an Object (create.php)](#creating-an-object-createphp)
+      + [Listing Objects (find.php)](#listing-objects-findphp)
+      + [Object Details (findOne.php)](#object-details-findonephp)
+      + [Updating an Object (update.php)](#updating-an-object-updatephp)
+      + [Deleting an Object (delete.php)](#deleting-an-object-deletephp)
+      + [Additional Services (service.php)](#additional-services-servicephp)
+      + [Weapons Management (weapon.php)](#weapons-management-weaponphp)
+   * [Database](#database)
+      + [Initial Configuration](#initial-configuration)
+      + [Main Tables](#main-tables)
+         - [`weapons` Table](#weapons-table)
+   * [DAO (Data Access Object)](#dao-data-access-object)
+      + [Main Features](#main-features)
+      + [Architecture](#architecture)
 
 ---
 
-### Fonctionnalités bonus (3 points)
-| Critère                                         | Détails                                                                         | Points |
-|-------------------------------------------------|---------------------------------------------------------------------------------|--------|
-| **Suppression des armes associées aux vikings** | Lorsqu'une arme est supprimée, tous les vikings associés perdent cette arme.    | 1.5    |
-| **GET /viking/findByWeapon.php**                | Retourne tous les vikings avec l'arme demandée sous forme HATEOAS (nom + lien). | 1.5    |
+## Endpoints
 
+### Creating an Object (create.php)
 
-Les points des fonctionnalités bonus seront ajoutés à votre note d'examen finale ou à votre note de QCM.
+- **Method:** `POST`
+- **Description:** Creates a new object in the database.
+- **Expected Inputs:**
+  - `name` (string): Name of the object (required).
+  - `type` (string): Type or category of the object (required).
+  - Other specific fields based on the data model.
+
+- **HTTP Responses:**
+  - `201 Created`: Object successfully created. Returns the created object.
+  - `400 Bad Request`: Invalid request (e.g., missing fields or incorrect format).
+    - Error message: `{"error": "Invalid input data"}`
+  - `500 Internal Server Error`: Server error during the creation process.
+    - Error message: `{"error": "Failed to create object"}`
+
+### Listing Objects (find.php)
+
+- **Method:** `GET`
+- **Description:** Retrieves a list of objects stored in the database.
+- **Optional Parameters:**
+  - `limit` (int): Limit the number of returned objects (optional).
+  - `offset` (int): Offset for pagination (optional).
+
+- **HTTP Responses:**
+  - `200 OK`: Successfully returned a list of objects.
+  - `204 No Content`: No objects found.
+  - `500 Internal Server Error`: Server error during retrieval.
+    - Error message: `{"error": "Failed to fetch objects"}`
+
+### Object Details (findOne.php)
+
+- **Method:** `GET`
+- **Description:** Retrieves details of a specific object.
+- **Expected Parameters:**
+  - `id` (int): Unique identifier of the object (required).
+
+- **HTTP Responses:**
+  - `200 OK`: Object found and returned.
+  - `404 Not Found`: Object not found for the given `id`.
+    - Error message: `{"error": "Object not found"}`
+  - `400 Bad Request`: Missing or invalid `id` parameter.
+    - Error message: `{"error": "Invalid ID provided"}`
+  - `500 Internal Server Error`: Error during object retrieval.
+    - Error message: `{"error": "Failed to fetch object"}`
+
+### Updating an Object (update.php)
+
+- **Method:** `PUT`
+- **Description:** Updates information of an existing object.
+- **Expected Parameters:**
+  - `id` (int): Unique identifier of the object to be updated (required).
+  - Fields to be updated, such as `name` or `type` (required).
+
+- **HTTP Responses:**
+  - `200 OK`: Object successfully updated. Returns the updated object data.
+  - `400 Bad Request`: Missing or incorrect parameters.
+    - Error message: `{"error": "Invalid input data"}`
+  - `404 Not Found`: Object not found with the given `id`.
+    - Error message: `{"error": "Object not found"}`
+  - `500 Internal Server Error`: Error during the update process.
+    - Error message: `{"error": "Failed to update object"}`
+
+### Deleting an Object (delete.php)
+
+- **Method:** `DELETE`
+- **Description:** Deletes an object from the database.
+- **Expected Parameters:**
+  - `id` (int): Unique identifier of the object (required).
+
+- **HTTP Responses:**
+  - `200 OK`: Object successfully deleted.
+  - `400 Bad Request`: Missing or invalid `id` parameter.
+    - Error message: `{"error": "Invalid ID provided"}`
+  - `404 Not Found`: No object found with the given `id`.
+    - Error message: `{"error": "Object not found"}`
+  - `500 Internal Server Error`: Error during the deletion process.
+    - Error message: `{"error": "Failed to delete object"}`
+
+### Additional Services (service.php)
+
+- **Description:** Utility file including features such as:
+  - Database connection management.
+  - Global error or exception handling.
+  - Reusable functions for controllers.
+
+### Weapons Management (weapon.php)
+
+- **Description:** Contains business logic specific to weapons, including:
+  - Validation of input data.
+  - Calls to DAO functions to interact with the `weapon` table.
+  - Specific calculations or data transformations related to weapons.
+
+- **Internal Use:** This file serves as an intermediary layer between the endpoints and the database.
+
+---
+
+## Database
+
+The API relies on a database to store information related to weapons.
+
+### Initial Configuration
+
+To set up the database, use the provided SQL file:
+
+```bash
+mysql -u [user] -p [database_name] < vikings.sql
+```
+
+### Main Tables
+
+Here is a summary of the tables included in the `vikings.sql` file:
+
+#### `weapons` Table
+
+- **Description:** Stores information about weapons.
+- **Columns:**
+  - `id` (INT, PRIMARY KEY, AUTO_INCREMENT): Unique identifier of the weapon.
+  - `name` (VARCHAR): Name of the weapon.
+  - `type` (VARCHAR): Type or category of the weapon.
+  - `damage` (INT): Damage points inflicted by the weapon.
+  - `weight` (FLOAT): Weight of the weapon in kilograms.
+  - `created_at` (TIMESTAMP): Record creation date.
+  - `updated_at` (TIMESTAMP): Last update date.
+
+---
+
+## DAO (Data Access Object)
+
+The DAO (Data Access Object) manages interactions with the database. In this API, the `weapon.php` file implements the necessary functions to interact with the `weapon` table.
+
+### Main Features
+
+The DAO in `weapon.php` includes the following methods:
+
+- **Create a Weapon:** Add a record to the table.
+- **Retrieve All Weapons:** Get a complete list of records.
+- **Retrieve a Specific Weapon:** Find a record by its `id`.
+- **Update a Weapon:** Modify information of an existing weapon.
+- **Delete a Weapon:** Remove a record from the database.
+
+### Architecture
+
+The DAO uses SQL queries with prepared statements to ensure security (SQL injection prevention) and code modularity. It operates through a PDO instance. 
+
+---
